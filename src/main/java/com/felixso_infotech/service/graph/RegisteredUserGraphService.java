@@ -2,8 +2,6 @@ package com.felixso_infotech.service.graph;
 
 import java.util.List;
 
-import org.springframework.web.bind.annotation.PathVariable;
-
 import com.felixso_infotech.domain.graph.RegisteredUser;
 
 public interface RegisteredUserGraphService {
@@ -15,7 +13,7 @@ public interface RegisteredUserGraphService {
 	 * @param wellWisherId the registered user id
 	 * @return the well wisher registered user
 	 */
-	public RegisteredUser createWellWisher(String userId, String wellWisherId);
+	public RegisteredUser createWellWisherAndWellWishing(RegisteredUser currentUser,RegisteredUser registeredUser);
 		
 	/**
 	 * Find all well wishers by registered user id
@@ -23,16 +21,33 @@ public interface RegisteredUserGraphService {
 	 * @param userId the registered user id
 	 * @return list of well wisher registered users
 	 */
-	public List<RegisteredUser> findAllWellWishersByUserId(@PathVariable String userId);
+	public List<RegisteredUser> findAllWellWishersByUserId(String userId);
+	
+	/**
+	 * Find all well wishing by registered user id
+	 *
+	 * @param userId the registered user id
+	 * @return list of well wisher registered users
+	 */
+	public List<RegisteredUser> findAllWellWishingByUserId(String userId);
+	
+	/**
+	 * get count well wishers by registered user id
+	 *
+	 * @param userId the registered user id
+	 * @return count of well wishers registered users
+	 */
+	Long countOfWellWishersByUserId(String userId);
+	
+	/**
+	 * get count well wishing by registered user id
+	 *
+	 * @param userId the registered user id
+	 * @return count of well wishing registered users
+	 */
+	Long countOfWellWishingByUserId(String userId);
 	
 
-	/**
-	 * Find mutual well wishers
-	 *
-	 * @param userId1 the registered user id
-	 * @param userId2 the registered user id
-	 * @return list of well wisher registered userss
-	 */
-	public List<RegisteredUser> findMutualWellWishers(String userId1, String userId2);
+	
 
 }

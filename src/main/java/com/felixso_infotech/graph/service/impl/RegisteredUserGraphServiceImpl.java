@@ -34,11 +34,23 @@ public class RegisteredUserGraphServiceImpl implements RegisteredUserGraphServic
 	 * @return the well wisher registered user
 	 */
 	@Override
-	public RegisteredUser createWellWisher(String userId, String friendId) {
+	public RegisteredUser createWellWisherAndWellWishing(RegisteredUser currentUser,RegisteredUser registeredUser) {
 		
-		log.debug("request to create welwisher:" + userId + " wellWisherId:" + friendId);
+		//log.debug("request to create welwisher-wellwishing  currentuser:" + currentUser + " registeredUser:" + registeredUser);
+		
+		RegisteredUser currentUser1 = registeredUserGraphRepository.findByUserId( currentUser.getUserId());
+		if(currentUser1 != null)
+			currentUser1=registeredUserGraphRepository.save(currentUser1);
+				
+	    RegisteredUser	registeredUser1 = registeredUserGraphRepository.findByUserId(registeredUser.getUserId());
+	    if(registeredUser1 != null)
+	    	registeredUser1=registeredUserGraphRepository.save(registeredUser1);
+	    
+	    //registeredUserGraphRepository.createWellWishing(currentUser.getUserId(),registeredUser.getUserId());
 
-		return registeredUserGraphRepository.createWellWisher(userId, friendId);
+	    return registeredUserGraphRepository.createWellWisher(currentUser.getUserId(),registeredUser.getUserId());
+		
+		
 	}
 
 	/**
@@ -55,15 +67,46 @@ public class RegisteredUserGraphServiceImpl implements RegisteredUserGraphServic
 	}
 	
 	/**
-	 * Find mutual well wishers
+	 * Find all well wishing by registered user id
 	 *
-	 * @param userId1 the registered user id
-	 * @param userId2 the registered user id
-	 * @return list of well wisher registered users
+	 * @param userId the registered user id
+	 * @return list of well wishing registered users
+	 */
+
+	@Override
+	public List<RegisteredUser> findAllWellWishingByUserId(String userId) {
+		
+		log.debug("getall welwishing:" + userId );
+		return registeredUserGraphRepository.findAllWellWishingByUserId(userId);
+	}
+	
+	/**
+	 * get count well wishers by registered user id
+	 *
+	 * @param userId the registered user id
+	 * @return count of well wishers registered users
+	 */
+
+	@Override
+	public Long countOfWellWishersByUserId(String userId) {
+		
+		log.debug("get count welwishers:" + userId );
+		return registeredUserGraphRepository.countOfWellWishersByUserId(userId);
+	}
+
+	
+	/**
+	 * get count well wishing by registered user id
+	 *
+	 * @param userId the registered user id
+	 * @return count of well wishing registered users
 	 */
 	@Override
-	public List<RegisteredUser> findMutualWellWishers(String userId1, String userId2) {
-		log.debug("mutaul friends:" + userId1 + " friendof" + userId2);
-		return registeredUserGraphRepository.findMutualFriends(userId1, userId2);
+	public Long countOfWellWishingByUserId(String userId) {
+		
+		log.debug("get count welwishing:" + userId );
+		return registeredUserGraphRepository.countOfWellWishingByUserId(userId);
 	}
+	
+	
 }

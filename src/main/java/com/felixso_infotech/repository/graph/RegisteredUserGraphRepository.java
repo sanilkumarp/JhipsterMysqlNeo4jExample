@@ -14,6 +14,26 @@ import com.felixso_infotech.domain.graph.RegisteredUser;
 @Repository
 public interface RegisteredUserGraphRepository extends Neo4jRepository<RegisteredUser, String> {
 	
+	
+	/**
+	 * Find registeredUser by registered user id
+	 *
+	 * @param userId the registered user id
+	 * @return registered users
+	 */
+	RegisteredUser findByUserId(@Param("userId") String userId);
+
+	
+	/**
+	 * save registeredUser by registered user 
+	 *
+	 * @param registereduser the registered user
+	 * @return registered users
+	 */
+	
+	RegisteredUser save(RegisteredUser registeredUser);
+	
+	
 	/**
 	 * Create a well wisher relationship.
 	 *
@@ -21,9 +41,21 @@ public interface RegisteredUserGraphRepository extends Neo4jRepository<Registere
 	 * @param wellWisherId the registered user id
 	 * @return the well wisher registered user
 	 */
-	@Query("match (u:RegisteredUser{userId:" + "{userId}" + "}),(w:RegisteredUser{userId:" + "{friendId}"
-			+ "}) create (u)-[:WELLWISHER_OF]->(w) return u,w;")
-	RegisteredUser createWellWisher(@Param("userId") String userId, @Param("friendId") String friendId);
+	@Query("match (u:RegisteredUser{userId:" + "{userId}" + "}),(w:RegisteredUser{userId:" + "{wellWisherId}"
+			+ "}) create (u)-[r:WELLWISHER_OF]->(w) return w,r,u;")
+	RegisteredUser createWellWisher(@Param("userId") String userId, @Param("wellWisherId") String wellWisherId);
+	
+	
+	/**
+	 * Create a well wishing relationship.
+	 *
+	 * @param userId       the registered user id
+	 * @param wellWishingId the registered user id
+	 * @return the well wisher registered user
+	 */
+	@Query("match (u:RegisteredUser{userId:" + "{userId}" + "}),(w:RegisteredUser{userId:" + "{wellWisherId}"
+			+ "}) create (u)-[r:WELLWISHING_OF]->(w) return u,w;")
+	RegisteredUser createWellWishing(@Param("userId") String userId, @Param("wellWisherId") String wellWisherId);
 	
 	
 	/**
@@ -37,10 +69,60 @@ public interface RegisteredUserGraphRepository extends Neo4jRepository<Registere
 	List<RegisteredUser> findAllWellWishersByUserId(@Param("userId") String userId);
 	
 	
-	// To find mutaul well wishers of two registered user
-	@Query("MATCH (u1:RegisteredUser {userId:" + "{userId1}"
-				+ "})-[:WELLWISHER_OF]-(ww:RegisteredUser)-[:WELLWISHER_OF]-(u2:RegisteredUser {userId:" + "{userId2}"
-				+ "}) RETURN  ww")
-	List<RegisteredUser> findMutualFriends(@Param("userId1") String userId1, @Param("userId2") String userId2);
+	/**
+	 * Find all well wishing by registered user id
+	 *
+	 * @param userId the registered user id
+	 * @return list of well wishing registered users
+	 */
+	@Query("MATCH (u:RegisteredUser{userId:" + " {userId} "
+			+ "}),(u)-[r:WELLWISHING_OF]-(wellwishing) RETURN wellwishing;")
+	List<RegisteredUser> findAllWellWishingByUserId(@Param("userId") String userId);
+	
+	
+	/**
+	 * get count well wishers by registered user id
+	 *
+	 * @param userId the registered user id
+	 * @return count of well wishers registered users
+	 */	
+	@Query("MATCH (u:RegisteredUser{userId:" + " {userId}"
+			+ "}),(u)-[r:WELLWISHER_OF]-(wellwishers) RETURN count(*) ")
+	Long countOfWellWishersByUserId(@Param("userId") String userId);
 
+	
+	/**
+	 * get count well wishing by registered user id
+	 *
+	 * @param userId the registered user id
+	 * @return count of well wishing registered users
+	 */
+	@Query("MATCH (u:RegisteredUser{userId:" + " {userId}"
+			+ "}),(u)-[r:WELLWISHING_OF]-(wellwishing) RETURN count(*) ")
+	Long countOfWellWishingByUserId(@Param("userId") String userId);
+	
+	
+	/**
+	 * Find exist registeredUser by registered user id
+	 *
+	 * @param userId the registered user id
+	 * @return registered users
+	 */
+	@Query("MATCH (p:RegisteredUser) WHERE exists(p.userId) RETURN p.name,p.userId")
+	RegisteredUser getRegisteredUserIsExist(@Param("userId") String userId);
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 }

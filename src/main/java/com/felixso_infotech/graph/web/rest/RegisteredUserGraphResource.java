@@ -1,20 +1,25 @@
 package com.felixso_infotech.graph.web.rest;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.felixso_infotech.domain.graph.RegisteredUser;
+import com.felixso_infotech.domain.graph.RegisteredUserModel;
 import com.felixso_infotech.service.graph.RegisteredUserGraphService;
 
-
-
+import io.github.jhipster.web.util.HeaderUtil;
 
 
 /**
@@ -25,6 +30,11 @@ import com.felixso_infotech.service.graph.RegisteredUserGraphService;
 public class RegisteredUserGraphResource {
 	
 	private final Logger log = LoggerFactory.getLogger(RegisteredUserGraphResource.class);
+	
+	private static final String ENTITY_NAME = "jhipsterMysqlNeo4JSampleRegisteredUser";
+	
+	@Value("${jhipster.clientApp.name}")
+    private String applicationName;
 
     private RegisteredUserGraphService registeredUserGraphService;
 
@@ -33,17 +43,22 @@ public class RegisteredUserGraphResource {
     }
     
     /**
-	 * GET /createWellWisher/registeredUser/{userId}/{wellWisherId} create well
-	 * wisher relationship
+	 * POST /createWellWisher-wellWishing/registeredUser/ create well
+	 * wisher-wellwishing relationship
 	 *
-	 * @param userId       the registered user id
-	 * @param wellWisherId the well wisher id
+	 * @param registeredUserModel the registeredUserModel.
+	 *
 	 */
-	@PostMapping("/createWellWisher/registeredUser/{userId}/{wellWisherId}")
-	public RegisteredUser createWellWisher(@PathVariable String userId, @PathVariable String wellWisherId) {
+	@PostMapping("/createWellWisher-wellWishing/registeredUser/")
+	public ResponseEntity<RegisteredUser> createWellWisherAndWellWishing(@RequestBody RegisteredUserModel registeredUserModel) throws URISyntaxException {
 		
-		log.debug("request to create welwisher:" + userId + " wellWisherId:" + wellWisherId);
-		return registeredUserGraphService.createWellWisher(userId, wellWisherId);
+		log.debug("request to create welwisher-wellwishing  currentuser:" + registeredUserModel.getCurrentUser() + " registeredUser:" + registeredUserModel.getRegisteredUser());
+		
+		RegisteredUser result = registeredUserGraphService.createWellWisherAndWellWishing(registeredUserModel.getCurrentUser(), registeredUserModel.getRegisteredUser());
+		
+		return ResponseEntity.created(new URI("/api/registered-users/"))
+	            .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME,"result"))
+	            .body(result);
 	}
 
 	/**
@@ -51,21 +66,39 @@ public class RegisteredUserGraphResource {
 	 *
 	 * @param userId the registered user id
 	 */
-	@GetMapping("/registeredUser/wellWisher/{userId}")
+	@GetMapping("/registeredUser/well-Wishers/{userId}")
 	public List<RegisteredUser> findAllWellWishersByUserId(@PathVariable String userId) {
 		return registeredUserGraphService.findAllWellWishersByUserId(userId);
 	}
 	
 	/**
-	 * GET /registeredUserMutaulWellWisher/{userId1}/{userId2} : get mutual well
-	 * wishers of two registered users by userId1,userId2
+	 * GET /registeredUser/wellWishing/{userId} : get all well wishers by user id
 	 *
-	 * @param userId1 the registered user user id
-	 * @param userId2 the registered user user id
+	 * @param userId the registered user id
 	 */
-	@GetMapping("/registeredUserMutaulWellWisher/{userId1}/{userId2}")
-	public List<RegisteredUser> findMutualFriends(@PathVariable String userId1, @PathVariable String userId2) {
-		return registeredUserGraphService.findMutualWellWishers(userId1, userId2);
+	@GetMapping("/registeredUser/well-Wishing/{userId}")
+	public List<RegisteredUser> findAllWellWishingByUserId(@PathVariable String userId) {
+		return registeredUserGraphService.findAllWellWishingByUserId(userId);
 	}
-
+	
+	/**
+	 * GET /registeredUser/wellWisher/{userId} : get count well wishers by user id
+	 *
+	 * @param userId the registered user id
+	 */
+	@GetMapping("/registeredUser/wellWishers-count/{userId}")
+	public Long countOfWellWishersByUserId(@PathVariable String userId) {
+		return registeredUserGraphService.countOfWellWishersByUserId(userId);
+	}
+	
+	/**
+	 * GET /registeredUser/wellWishing/{userId} : get count well wishing by user id
+	 *
+	 * @param userId the registered user id
+	 */
+	@GetMapping("/registeredUser/wellWishing-count/{userId}")
+	public Long countOfWellWishingByUserId(@PathVariable String userId) {
+		return registeredUserGraphService.countOfWellWishingByUserId(userId);
+	}
+	
 }
