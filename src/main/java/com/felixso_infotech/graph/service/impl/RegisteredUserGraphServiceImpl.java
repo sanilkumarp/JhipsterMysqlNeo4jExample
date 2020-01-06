@@ -36,19 +36,21 @@ public class RegisteredUserGraphServiceImpl implements RegisteredUserGraphServic
 	@Override
 	public RegisteredUser createWellWisherAndWellWishing(RegisteredUser currentUser,RegisteredUser registeredUser) {
 		
-		//log.debug("request to create welwisher-wellwishing  currentuser:" + currentUser + " registeredUser:" + registeredUser);
+		log.debug("request to create welwisher-wellwishing  currentuser:" + currentUser + " registeredUser:" + registeredUser);
 		
 		RegisteredUser currentUser1 = registeredUserGraphRepository.findByUserId( currentUser.getUserId());
-		if(currentUser1 != null)
-			currentUser1=registeredUserGraphRepository.save(currentUser1);
+		if(currentUser1 == null)
+			currentUser1=registeredUserGraphRepository.saveNewUser(currentUser.getFirstName(),currentUser.getUserId());
+		
+		
 				
 	    RegisteredUser	registeredUser1 = registeredUserGraphRepository.findByUserId(registeredUser.getUserId());
-	    if(registeredUser1 != null)
-	    	registeredUser1=registeredUserGraphRepository.save(registeredUser1);
+	    if(registeredUser1 == null)
+	    	registeredUser1=registeredUserGraphRepository.saveNewUser(registeredUser.getFirstName(),registeredUser.getUserId());
 	    
 	    //registeredUserGraphRepository.createWellWishing(currentUser.getUserId(),registeredUser.getUserId());
 
-	    return registeredUserGraphRepository.createWellWisher(currentUser.getUserId(),registeredUser.getUserId());
+	    return registeredUserGraphRepository.createWellWisher(currentUser1.getUserId(),registeredUser1.getUserId());
 		
 		
 	}

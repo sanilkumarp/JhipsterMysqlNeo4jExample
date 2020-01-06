@@ -86,7 +86,7 @@ public class RegisteredUserGraphResource {
 	 *
 	 * @param userId the registered user id
 	 */
-	@GetMapping("/registeredUser/wellWishers-count/{userId}")
+	@GetMapping("/registeredUser/wellWishers-count/{userId}")	
 	public Long countOfWellWishersByUserId(@PathVariable String userId) {
 		return registeredUserGraphService.countOfWellWishersByUserId(userId);
 	}
